@@ -10,7 +10,7 @@ import {
   ToastAndroid
 } from 'react-native';
 const { width, height } = Dimensions.get('window')
-
+var TWEEN = require('tween.js');
 
 export class App extends Component {
   componentWillMount() {
@@ -46,6 +46,8 @@ export class App extends Component {
       onPanResponderRelease: (evt, gestureState) => {
         // The user has released all touches while this view is the
         // responder. This typically means a gesture has succeeded
+        const dx=gestureState.dx;
+        me.accept("panEnd",dx);
       },
       onPanResponderTerminate: (evt, gestureState) => {
         // Another component has become the responder, so this gesture
@@ -61,28 +63,29 @@ export class App extends Component {
 
   constructor(props){
     super(props);
-    this.state={contX:-width,leftX:0,middleX:width,rightX:2*width}
+    this.state={contX:-width,leftX:0,middleX:width,rightX:2*width,
+      llist:0,mlist:1,rlist:2}
     this.accept=this.accept.bind(this);
   }
 
   render() {
     console.log(styles)
-    const {contX,leftX,middleX,rightX}=this.state;
+    const {contX,leftX,middleX,rightX,llist,mlist,rlist}=this.state;
     return (
       <View style={[containerStyle,{left:contX}]}>
         <View style={[styles.leftlist,{left:leftX}]} >
           <View style={styles.card}>
-            <Text style={styles.text}>0</Text>
+            <Text style={styles.text}>{llist}</Text>
           </View>
         </View>
         <View style={[styles.middlelist,{left:middleX}]} {...this._panResponder.panHandlers}>
           <View style={styles.card}  >
-            <Text style={styles.text}>1</Text>
+            <Text style={styles.text}>{mlist}</Text>
           </View>
         </View>
         <View style={[styles.rightlist,{left:rightX}]} >
           <View style={styles.card}>
-            <Text style={styles.text}>2</Text>
+            <Text style={styles.text}>{rlist}</Text>
           </View>
         </View>
       </View>
@@ -93,6 +96,7 @@ export class App extends Component {
     var state=this.state||{}; //获取当前的state值
     const fns={
       "contX":setContainerX, //响应msg的函数列表
+      "panEnd":panEnd
     }
     if(fns[msg]){ //如果有响应函数，用响应函数处理state后刷新组件
       state=fns[msg](state,data,msg);
@@ -103,6 +107,17 @@ export class App extends Component {
 
 function setContainerX(state,dx,msg) {
   state.contX=-width+dx;
+  return state;
+}
+
+function panEnd(state,dx,msg) {
+  console.log("panEnd")
+  if(dx<-20){
+    state.contX=-width+dx;
+    state.llist=state.mlist;
+    state.mlist=state.rlist;
+    state.rlist=state.mlist+1;
+  }
   return state;
 }
 
