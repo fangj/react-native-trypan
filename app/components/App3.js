@@ -61,21 +61,26 @@ export class App extends Component {
 
   constructor(props){
     super(props);
-    this.state={}
+    this.state={contX:-width,leftX:0,middleX:width,rightX:2*width}
     this.accept=this.accept.bind(this);
   }
 
   render() {
     console.log(styles)
-    var contX=this.state.contX||0;
+    const {contX,leftX,middleX,rightX}=this.state;
     return (
       <View style={[containerStyle,{left:contX}]}>
-        <View style={styles.leftlist} {...this._panResponder.panHandlers}>
+        <View style={[styles.leftlist,{left:leftX}]} >
+          <View style={styles.card}>
+            <Text style={styles.text}>0</Text>
+          </View>
+        </View>
+        <View style={[styles.middlelist,{left:middleX}]} {...this._panResponder.panHandlers}>
           <View style={styles.card}  >
             <Text style={styles.text}>1</Text>
           </View>
         </View>
-        <View style={styles.rightlist} >
+        <View style={[styles.rightlist,{left:rightX}]} >
           <View style={styles.card}>
             <Text style={styles.text}>2</Text>
           </View>
@@ -96,8 +101,8 @@ export class App extends Component {
   }
 }
 
-function setContainerX(state,data,msg) {
-  state.contX=data;
+function setContainerX(state,dx,msg) {
+  state.contX=-width+dx;
   return state;
 }
 
@@ -105,11 +110,16 @@ var containerStyle={
     position:"relative",
     backgroundColor: '#F5FCFF',
     height:height,
-    width:width*2
+    width:width*3
   };
 const styles = StyleSheet.create({
-
   leftlist:{
+    position:"absolute",
+    backgroundColor: 'lightpink',
+    width:width,
+    height:height
+  },
+  middlelist:{
     position:"absolute",
     backgroundColor: 'lightgreen',
     width:width,
@@ -119,8 +129,7 @@ const styles = StyleSheet.create({
     position:"absolute",
     backgroundColor: 'lightblue',
     width:width,
-    height:height,
-    left:width,
+    height:height
   },
   card:{
     width:width,
@@ -136,12 +145,6 @@ const styles = StyleSheet.create({
     fontSize:72
   }
 });
-
-import {AppRegistry } from 'react-native';
-AppRegistry.registerComponent('AwesomeProject', () => App);
-
-
-
 // import {AppRegistry } from 'react-native';
 // AppRegistry.registerComponent('AwesomeProject', () => App);
 
