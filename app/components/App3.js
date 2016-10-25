@@ -99,7 +99,7 @@ export class App extends Component {
       "panEnd":panEnd
     }
     if(fns[msg]){ //如果有响应函数，用响应函数处理state后刷新组件
-      state=fns[msg](state,data,msg);
+      state=fns[msg](state,data,msg,this);
       this.setState(state);
     }
   }
@@ -110,13 +110,18 @@ function setContainerX(state,dx,msg) {
   return state;
 }
 
-function panEnd(state,dx,msg) {
+function panEnd(state,dx,msg,me) {
   console.log("panEnd")
   if(dx<-20){
-    state.contX=-width+dx;
-    state.llist=state.mlist;
-    state.mlist=state.rlist;
-    state.rlist=state.mlist+1;
+    setTimeout(()=>{
+      state.contX=-width+dx;
+      state.llist=state.mlist;
+      state.mlist=state.rlist;
+      state.rlist=state.mlist+1;
+      me.setState(state);
+
+    },10)
+
   }
   return state;
 }
